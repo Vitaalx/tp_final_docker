@@ -1,44 +1,105 @@
-version: "3.7"
+version: '3'
 services:
+  
+  #PHP Service app 1
+  app1:
+    build: ./app1
+    container_name: app1
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app1
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./app1/:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+    depends_on:
+      - webserver1
+  
+  #PHP Service app 2
+  app2:
+    build: ./app2
+    container_name: app2
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app2
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./app2/:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app2-network
+    depends_on:
+      - webserver2
 
-    # PHP service
-    app:
-        build: .
-        container_name: php-app
-        working_dir: /var/www/
-        volumes:
-            - ./:/var/www
-        networks:
-            - app-network
+  #Nginx Service app 1
+  webserver1:
+    image: nginx:alpine
+    container_name: webserver1
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8001:80"
+    volumes:
+      - ./app1/:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+    depends_on:
+      - db
 
-    # MySQL database service
-    db:
-        image: mysql:5.7
-        container_name: mysql-db
-        ports:
-            - "3306:3306"
-        environment:
-            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-            MYSQL_DATABASE: ${DB_DATABASE}
-            MYSQL_USER: ${DB_USERNAME}
-            MYSQL_PASSWORD: ${DB_PASSWORD}
-        env_file:
-            - ./.env
-        networks:
-            - app-network
+  #Nginx Service app 2
+  webserver2:
+    image: nginx:alpine
+    container_name: webserver2
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8002:80"
+    volumes:
+      - ./app2/:/var/www
+      - ./nginx2/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - app2-network
+    depends_on:
+      - db
 
-    # Nginx service
-    nginx:
-        image: nginx:alpine
-        container_name: php-nginx
-        ports:
-            - 8000:80
-        volumes:
-            - ./:/var/www
-            - ./nginx/conf.d/:/etc/nginx/conf.d/
-        networks:
-            - app-network
+  #MySQL Service app 1 and app 2
+  db:
+    image: mysql:8.0
+    container_name: db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: ${DB_CONNECTION}
+    env_file:
+      - ./.env
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - app-network
+      - app2-network
 
+#Docker Networks
 networks:
-    app-network:
-        driver: bridge
+  app-network:
+    driver: bridge
+  app2-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
