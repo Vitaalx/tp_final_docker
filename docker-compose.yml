@@ -93,6 +93,31 @@ services:
       - app-network
       - app2-network
 
+  #mail server
+  maildev:
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - app-network
+      - app2-network
+
+  vue:
+    container_name: vue
+    build:
+      context: ./vue
+      dockerfile: Dockerfile
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./vue/:/app
+    command: npm run serve
+    networks:
+      - app-network
+      - app2-network
+
 #Docker Networks
 networks:
   app-network:
