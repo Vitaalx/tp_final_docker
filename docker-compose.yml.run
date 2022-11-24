@@ -114,6 +114,7 @@ services:
       - "8080:8080"
     volumes:
       - ./vue/:/app
+    command: npm run serve
     networks:
       - app-network
       - app2-network

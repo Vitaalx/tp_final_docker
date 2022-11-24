@@ -9,15 +9,11 @@ WORKDIR /app
 # copie 'package.json' et 'package-lock.json' (si disponible)
 COPY package*.json ./
 
-# installe les dépendances du projet
+# installe nouvelles version de npm
 RUN npm install -g npm@9.1.2
-RUN npm install
 
 # copie les fichiers et dossiers du projet dans le dossier de travail (par exemple : le dossier 'app')
 COPY . .
-
-# construit l'app pour la production en la minifiant
-RUN npm run build
 
 EXPOSE 8080
 CMD [ "http-server", "dist" ]

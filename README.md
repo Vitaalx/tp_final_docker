@@ -1,20 +1,36 @@
-# Docker clean with php & mysql
+<center><h1>School project ESGI group 8</h1></center>
 
-School project ESGI group 8
+<br/>
 
-## Installation
+<center>
 
-installation avec docker
+[![forthebadge](https://forthebadge.com/images/badges/built-by-developers.svg)](https://forthebadge.com) &nbsp;
+[![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com) &nbsp;
+![GitHub Repo stars](https://img.shields.io/github/stars/Vitaalx/tp_final_docker?color=yellow&logo=github&style=for-the-badge) &nbsp;
+![GitHub forks](https://img.shields.io/github/forks/Vitaalx/tp_final_docker?color=blue&logo=github&style=for-the-badge)
+
+</center>
+
+
+## Installation with start.sh script
+
+### Installation
 
 ```bash
-docker-compose up -d
+./start.sh
+```
+
+### Re-start Project
+
+```bash
 docker-compose up
 ```
 
-## Config file
+### Config file
 
 ```bash
 ./docker-compose.yml
+./docker-compose.yml.run
 ./app1/Dockerfile
 ./app2/Dockerfile
 ./app1/.env
@@ -25,9 +41,12 @@ docker-compose up
 ./mysql/my.cnf
 ./php/local.ini
 ```
-create .env file with .env.example
 
-## Installation in container app1 and app2
+## Installation without start.sh script
+
+**Run:** *docker-compose up -d*
+
+### Installation in app1 and app2 containers
 
 Commands:
 ```bash
@@ -42,6 +61,18 @@ source ~/.bashrc
 nvm install 18.12.1
 npm install && npm run dev
 ```
+
+### Installation in vue container
+
+Commands:
+```bash
+npm install
+npm run build
+npm run serve
+```
+
+#### :warning: **Switch docker-compose.yml with docker-compose.yml.run** :warning:
+
 
 Project is configurate ! 😉
 
